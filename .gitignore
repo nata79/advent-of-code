@@ -1,0 +1,5 @@
+# Default ignored files
+/workspace.xml
+out
+.idea
+adventofcode2019.iml
