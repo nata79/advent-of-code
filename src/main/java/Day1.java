@@ -1,15 +1,8 @@
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.function.Function;
 
 public class Day1 {
-    public static void main(String[] args) throws URISyntaxException, IOException {
-        String input = new String(
-                Files.readAllBytes(Paths.get(Day1.class.getResource("day1.txt").toURI()))
-        );
-
+    public static void main(String[] args) {
+        String input = Utils.readFile("day1.txt");
         String[] lines = input.split("\n");
 
         System.out.println(calculateSumOf(lines, Day1::calculateFuel));
