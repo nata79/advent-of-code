@@ -28,27 +28,6 @@ public class Day2 {
     private static Integer[] processIntcode(Integer[] program, int noun, int verb) {
         program[1] = noun;
         program[2] = verb;
-        return processIntcode(program);
-    }
-
-    static Integer[] processIntcode(Integer[] program) {
-        Integer[] programCopy = new Integer[program.length];
-        System.arraycopy(program, 0, programCopy, 0, program.length);
-
-        for (int i = 0; i < programCopy.length; i += 4) {
-            int opcode = programCopy[i];
-            switch (opcode) {
-                case 1:
-                    programCopy[programCopy[i + 3]] = programCopy[programCopy[i + 1]] + programCopy[programCopy[i + 2]];
-                    break;
-                case 2:
-                    programCopy[programCopy[i + 3]] = programCopy[programCopy[i + 1]] * programCopy[programCopy[i + 2]];
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        return programCopy;
+        return IntCode.processIntcode(program);
     }
 }

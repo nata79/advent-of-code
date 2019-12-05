@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +18,7 @@ public class Day4 {
     }
 
     static boolean validPassword(int i) {
-        List<Integer> digits = getDigits(i);
+        List<Integer> digits = Utils.getDigits(i);
         Map<Integer, Integer> repetitions = new HashMap<>();
 
         for (int j = 0; j < digits.size(); j++) {
@@ -33,16 +32,5 @@ public class Day4 {
         }
 
         return !repetitions.isEmpty() && repetitions.values().stream().anyMatch(integer -> integer == 2);
-    }
-
-    private static List<Integer> getDigits(int i) {
-        List<Integer> digits = new ArrayList<>();
-
-        while (i > 0) {
-            digits.add(0, i % 10);
-            i = i / 10;
-        }
-
-        return digits;
     }
 }
