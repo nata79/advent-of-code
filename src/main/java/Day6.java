@@ -19,96 +19,67 @@ public class Day6 {
     }
 
     static int countOrbits(Graph graph) {
-        Map<String, Integer> distances = getDistances(graph, "COM");
+        Map<String, Integer> distances = graph.getDistances("COM");
         return distances.values().stream().reduce(Integer::sum).orElse(0);
     }
 
     static int getDistanceToOrbit(Graph graph, String origin, String dest) {
-        return getDistances(graph, origin).get(dest) - 2;
-    }
-
-    private static Map<String, Integer> getDistances(Graph graph, String root) {
-        Map<String, Integer> distances = new HashMap<>();
-        Set<String> visited = new LinkedHashSet<>();
-
-        Stack<String> stack = new Stack<>();
-        stack.push(root);
-        distances.put(root, 0);
-
-        while (!stack.isEmpty()) {
-            String vertex = stack.pop();
-
-            if (!visited.contains(vertex)) {
-                visited.add(vertex);
-                for (Vertex v : graph.getAdjacentVertices(vertex)) {
-                    stack.push(v.label);
-                    distances.put(v.label, distances.get(vertex) + 1);
-                }
-            }
-        }
-        return distances;
-    }
-
-    static class Vertex {
-        private final String label;
-
-        Vertex(String label) {
-            this.label = label;
-        }
-
-        String getLabel() {
-            return label;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Vertex vertex = (Vertex) o;
-            return label.equals(vertex.getLabel());
-        }
-
-        @Override
-        public int hashCode() {
-            return label.hashCode();
-        }
+        return graph.getDistances(origin).get(dest) - 2;
     }
 
     static class Graph {
-        private Map<Vertex, List<Vertex>> adjacentVertices;
+        private Map<String, List<String>> adjacentVertices;
 
         Graph() {
             adjacentVertices = new HashMap<>();
         }
 
-        void addVertex(Vertex vertex) {
+        void addVertex(String vertex) {
             if (!adjacentVertices.containsKey(vertex))
                 adjacentVertices.put(vertex, new ArrayList<>());
         }
 
         void addDirectedEdge(String from, String to) {
-            Vertex v1 = new Vertex(from);
-            Vertex v2 = new Vertex(to);
+            addVertex(from);
+            addVertex(to);
 
-            addVertex(v1);
-            addVertex(v2);
-
-            adjacentVertices.get(v1).add(v2);
+            adjacentVertices.get(from).add(to);
         }
 
         void addEdge(String from, String to) {
-            Vertex v1 = new Vertex(from);
-            Vertex v2 = new Vertex(to);
+            addVertex(from);
+            addVertex(to);
 
-            addVertex(v1);
-            addVertex(v2);
-
-            adjacentVertices.get(v1).add(v2);
-            adjacentVertices.get(v2).add(v1);
+            adjacentVertices.get(from).add(to);
+            adjacentVertices.get(to).add(from);
         }
 
-        List<Vertex> getAdjacentVertices(String label) {
-            return adjacentVertices.get(new Vertex(label));
+        private Map<String, Integer> getDistances(String root) {
+            Map<String, Integer> distances = new HashMap<>();
+            distances.put(root, 0);
+
+            Set<String> visited = new LinkedHashSet<>();
+
+            Stack<String> stack = new Stack<>();
+            stack.push(root);
+
+            while (!stack.isEmpty()) {
+                String vertex = stack.pop();
+
+                if (!visited.contains(vertex)) {
+                    visited.add(vertex);
+
+                    for (String adjacentVertex : this.getAdjacentVertices(vertex)) {
+                        stack.push(adjacentVertex);
+                        distances.put(adjacentVertex, distances.get(vertex) + 1);
+                    }
+                }
+            }
+            return distances;
+        }
+
+        private List<String> getAdjacentVertices(String label) {
+            return adjacentVertices.get(label);
         }
     }
 }
