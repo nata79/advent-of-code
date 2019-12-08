@@ -19,6 +19,10 @@ public class Utils {
         }
     }
 
+    public static String[] readLines(String filepath) {
+        return readFile(filepath).split("\n");
+    }
+
     public static List<Integer> getDigits(int i) {
         List<Integer> digits = new ArrayList<>();
 
