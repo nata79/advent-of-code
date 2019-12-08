@@ -1,87 +1,93 @@
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Function;
 
 class IntCode {
-    private static final Map<Integer, Operation> OPERATIONS = Map.of(
-            1,
-            new ProcedureOperation(
-                    1,
-                    2,
-                    0,
-                    true,
-                    (parameters, returnPosition, program) -> program[returnPosition] = parameters[0] + parameters[1]
-            ),
-            2,
-            new ProcedureOperation(
-                    2,
-                    2,
-                    0,
-                    true,
-                    (parameters, returnPosition, program) -> program[returnPosition] = parameters[0] * parameters[1]
-            ),
-            3,
-            new ProcedureOperation(
-                    3,
-                    0,
-                    0,
-                    true,
-                    (parameters, returnPosition, program) -> {
-                        Scanner in = new Scanner(System.in);
-                        program[returnPosition] = in.nextInt();
-                    }
-            ),
-            4,
-            new ProcedureOperation(
-                    4,
-                    1,
-                    0,
-                    false,
-                    (parameters, returnPosition, program) ->
-                            System.out.println(parameters[0])
-            ),
-            5,
-            new GoToOperation(
-                    5,
-                    2,
-                    0,
-                    (parameters) -> parameters[0] != 0
-            ),
-            6,
-            new GoToOperation(
-                    6,
-                    2,
-                    0,
-                    (parameters) -> parameters[0] == 0
-            ),
-            7,
-            new ProcedureOperation(
-                    7,
-                    2,
-                    0,
-                    true,
-                    (parameters, returnPosition, program) -> program[returnPosition] = parameters[0] < parameters[1] ? 1 : 0
-            ),
-            8,
-            new ProcedureOperation(
-                    8,
-                    2,
-                    0,
-                    true,
-                    (parameters, returnPosition, program) -> program[returnPosition] = parameters[0] == parameters[1] ? 1 : 0
-            ),
-            99,
-            new ProcedureOperation(
-                    99,
-                    0,
-                    0,
-                    false,
-                    null
-            )
-    );
+    private final Map<Integer, Operation> operations;
 
-    static Integer[] processIntcode(Integer[] program) {
+    IntCode() {
+        this(new StdIOProvider());
+    }
+
+    IntCode(IOProvider ioProvider) {
+        operations = Map.of(
+                1,
+                new ProcedureOperation(
+                        1,
+                        2,
+                        0,
+                        true,
+                        (parameters, returnPosition, program) -> program[returnPosition] = parameters[0] + parameters[1]
+                ),
+                2,
+                new ProcedureOperation(
+                        2,
+                        2,
+                        0,
+                        true,
+                        (parameters, returnPosition, program) -> program[returnPosition] = parameters[0] * parameters[1]
+                ),
+                3,
+                new ProcedureOperation(
+                        3,
+                        0,
+                        0,
+                        true,
+                        (parameters, returnPosition, program) -> program[returnPosition] = ioProvider.nextInt()
+                ),
+        4,
+                new ProcedureOperation(
+                        4,
+                        1,
+                        0,
+                        false,
+                        (parameters, returnPosition, program) -> ioProvider.putInt(parameters[0])
+                ),
+                5,
+                new GoToOperation(
+                        5,
+                        2,
+                        0,
+                        (parameters) -> parameters[0] != 0
+                ),
+                6,
+                new GoToOperation(
+                        6,
+                        2,
+                        0,
+                        (parameters) -> parameters[0] == 0
+                ),
+                7,
+                new ProcedureOperation(
+                        7,
+                        2,
+                        0,
+                        true,
+                        (parameters, returnPosition, program) -> program[returnPosition] = parameters[0] < parameters[1] ? 1 : 0
+                ),
+                8,
+                new ProcedureOperation(
+                        8,
+                        2,
+                        0,
+                        true,
+                        (parameters, returnPosition, program) -> program[returnPosition] = parameters[0] == parameters[1] ? 1 : 0
+                ),
+                99,
+                new ProcedureOperation(
+                        99,
+                        0,
+                        0,
+                        false,
+                        null
+                )
+        );
+    }
+
+    Integer[] processIntcode(Integer[] program) {
         Integer[] programCopy = new Integer[program.length];
         System.arraycopy(program, 0, programCopy, 0, program.length);
 
@@ -99,7 +105,7 @@ class IntCode {
         return programCopy;
     }
 
-    private static Instruction readNextInstruction(Integer[] program, int stackPointer) {
+    private Instruction readNextInstruction(Integer[] program, int stackPointer) {
         List<Integer> digits = Utils.getDigits(program[stackPointer]);
         int opcode;
 
@@ -110,7 +116,7 @@ class IntCode {
             opcode = (digits.get(digits.size() - 2) * 10) + digits.get(digits.size() - 1);
         }
 
-        Operation operation = OPERATIONS.get(opcode);
+        Operation operation = operations.get(opcode);
         int[] parameters = new int[operation.getNumberOfParameters()];
 
         for (int i = 0; i < operation.getNumberOfParameters(); i++) {
@@ -131,6 +137,25 @@ class IntCode {
                 : -1;
 
         return new Instruction(operation, parameters, returnPosition);
+    }
+
+    interface IOProvider {
+        int nextInt();
+
+        void putInt(int value);
+    }
+
+    private static class StdIOProvider implements IOProvider {
+        @Override
+        public int nextInt() {
+            Scanner scanner = new Scanner(System.in);
+            return scanner.nextInt();
+        }
+
+        @Override
+        public void putInt(int value) {
+            System.out.println(value);
+        }
     }
 
     private static class Instruction {
@@ -192,7 +217,8 @@ class IntCode {
         private final boolean hasReturnValue;
         private final ProcedureOperationExecutor action;
 
-        ProcedureOperation(int opcode, int numberOfParameters, int defaultParameterMode, boolean hasReturnValue, ProcedureOperationExecutor action) {
+        ProcedureOperation(int opcode, int numberOfParameters, int defaultParameterMode, boolean hasReturnValue,
+                           ProcedureOperationExecutor action) {
             super(opcode, numberOfParameters, defaultParameterMode);
             this.hasReturnValue = hasReturnValue;
             this.action = action;

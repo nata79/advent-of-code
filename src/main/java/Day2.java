@@ -28,6 +28,6 @@ public class Day2 {
     private static Integer[] processIntcode(Integer[] program, int noun, int verb) {
         program[1] = noun;
         program[2] = verb;
-        return IntCode.processIntcode(program);
+        return new IntCode().processIntcode(program);
     }
 }
