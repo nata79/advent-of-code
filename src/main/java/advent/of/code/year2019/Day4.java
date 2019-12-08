@@ -1,3 +1,7 @@
+package advent.of.code.year2019;
+
+import advent.of.code.Utils;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

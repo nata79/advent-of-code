@@ -1,8 +1,12 @@
+package advent.of.code.year2019;
+
+import advent.of.code.Utils;
+
 import java.util.function.Function;
 
 public class Day1 {
     public static void main(String[] args) {
-        String input = Utils.readFile("day1.txt");
+        String input = Utils.readFile("/2019/day1.txt");
         String[] lines = input.split("\n");
 
         System.out.println(calculateSumOf(lines, Day1::calculateFuel));

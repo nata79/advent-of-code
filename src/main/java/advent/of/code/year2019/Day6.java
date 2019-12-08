@@ -1,8 +1,12 @@
+package advent.of.code.year2019;
+
+import advent.of.code.Utils;
+
 import java.util.*;
 
 public class Day6 {
     public static void main(String[] args) {
-        String input = Utils.readFile("day6.txt");
+        String input = Utils.readFile("/2019/day6.txt");
         String[] orbits = input.split("\n");
 
         Graph graph = new Graph();

@@ -1,3 +1,5 @@
+package advent.of.code;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -5,8 +7,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-class Utils {
-    static String readFile(String filepath) {
+public class Utils {
+    public static String readFile(String filepath) {
         try {
             return new String(
                     Files.readAllBytes(Paths.get(Utils.class.getResource(filepath).toURI()))
@@ -17,7 +19,7 @@ class Utils {
         }
     }
 
-    static List<Integer> getDigits(int i) {
+    public static List<Integer> getDigits(int i) {
         List<Integer> digits = new ArrayList<>();
 
         while (i > 0) {

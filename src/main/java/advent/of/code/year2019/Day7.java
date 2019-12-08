@@ -1,3 +1,7 @@
+package advent.of.code.year2019;
+
+import advent.of.code.Utils;
+
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
@@ -6,7 +10,7 @@ import java.util.function.Consumer;
 
 public class Day7 {
     public static void main(String[] args) {
-        String input = Utils.readFile("day7.txt");
+        String input = Utils.readFile("/2019/day7.txt");
         Integer[] program = Arrays.stream(input.split(",")).map(Integer::parseInt).toArray(Integer[]::new);
 
         System.out.println(findMaxSignal(program));

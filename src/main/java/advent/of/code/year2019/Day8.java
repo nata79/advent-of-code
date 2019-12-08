@@ -1,3 +1,7 @@
+package advent.of.code.year2019;
+
+import advent.of.code.Utils;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -9,7 +13,7 @@ import java.util.Optional;
 
 public class Day8 {
     public static void main(String[] args) throws IOException {
-        String input = Utils.readFile("day8.txt");
+        String input = Utils.readFile("/2019/day8.txt");
         char[] chars = input.toCharArray();
         Integer[] pixels = new Integer[input.length()];
 
@@ -109,7 +113,7 @@ public class Day8 {
                         display[j] = layer[j];
                 }
             }
-            
+
             return display;
         }
     }

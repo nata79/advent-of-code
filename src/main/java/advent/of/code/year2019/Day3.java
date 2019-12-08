@@ -1,9 +1,13 @@
+package advent.of.code.year2019;
+
+import advent.of.code.Utils;
+
 import java.util.*;
 import java.util.function.Function;
 
 public class Day3 {
     public static void main(String[] args) {
-        String input = Utils.readFile("day3.txt");
+        String input = Utils.readFile("/2019/day3.txt");
 
         String[] lines = input.split("\n");
 
