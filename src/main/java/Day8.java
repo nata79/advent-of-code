@@ -67,6 +67,38 @@ public class Day8 {
             BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             Graphics2D g2d = bufferedImage.createGraphics();
 
+            Integer[] display = decode();
+
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    renderPixel(g2d, i, j, display);
+                }
+            }
+
+            g2d.dispose();
+
+            File file = new File("day8.png");
+            ImageIO.write(bufferedImage, "png", file);
+        }
+
+        private void renderPixel(Graphics2D g2d, int i, int j, Integer[] display) {
+            int pixel = display[(i * width) + j];
+
+            switch (pixel) {
+                case 2:
+                    break;
+                case 1:
+                    g2d.setColor(Color.WHITE);
+                    g2d.fillRect(j, i, 1, 1);
+                    break;
+                case 0:
+                    g2d.setColor(Color.BLACK);
+                    g2d.fillRect(j, i, 1, 1);
+                    break;
+            }
+        }
+
+        private Integer[] decode() {
             int imageSize = height * width;
             Integer[] display = new Integer[imageSize];
             Arrays.fill(display, 2);
@@ -77,30 +109,8 @@ public class Day8 {
                         display[j] = layer[j];
                 }
             }
-
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++) {
-                    int pixel = display[(i * width) + j];
-
-                    switch (pixel) {
-                        case 2:
-                            break;
-                        case 1:
-                            g2d.setColor(Color.WHITE);
-                            g2d.fillRect(j, i, 1, 1);
-                            break;
-                        case 0:
-                            g2d.setColor(Color.BLACK);
-                            g2d.fillRect(j, i, 1, 1);
-                            break;
-                    }
-                }
-            }
-
-            g2d.dispose();
-
-            File file = new File("day8.png");
-            ImageIO.write(bufferedImage, "png", file);
+            
+            return display;
         }
     }
 }
