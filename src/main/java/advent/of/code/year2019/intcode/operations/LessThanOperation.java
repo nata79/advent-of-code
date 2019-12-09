@@ -1,9 +1,7 @@
 package advent.of.code.year2019.intcode.operations;
 
-import advent.of.code.year2019.intcode.IntCodeProcess;
 import advent.of.code.year2019.intcode.IntCodeParameter;
-
-import java.math.BigInteger;
+import advent.of.code.year2019.intcode.IntCodeProcess;
 
 public class LessThanOperation implements Operation {
     @Override
@@ -18,9 +16,9 @@ public class LessThanOperation implements Operation {
 
     @Override
     public void execute(IntCodeProcess intCodeProcess, IntCodeParameter[] parameters) {
-        BigInteger[] program = intCodeProcess.getProgram();
-        program[parameters[2].getPointer()] = parameters[0].getValue().compareTo(parameters[1].getValue()) < 0 ?
-                BigInteger.ONE :
-                BigInteger.ZERO;
+        Long[] program = intCodeProcess.getProgram();
+        program[parameters[2].getPointer()] = parameters[0].getValue() < parameters[1].getValue() ?
+                1L :
+                0L;
     }
 }

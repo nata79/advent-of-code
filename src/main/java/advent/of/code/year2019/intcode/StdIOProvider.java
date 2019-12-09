@@ -1,17 +1,16 @@
 package advent.of.code.year2019.intcode;
 
-import java.math.BigInteger;
 import java.util.Scanner;
 
 class StdIOProvider implements IOProvider {
     @Override
-    public BigInteger nextInt() {
+    public Long nextInt() {
         Scanner scanner = new Scanner(System.in);
-        return BigInteger.valueOf(scanner.nextInt());
+        return scanner.nextLong();
     }
 
     @Override
-    public void putInt(BigInteger value) {
+    public void putInt(Long value) {
         System.out.println(value);
     }
 }

@@ -1,10 +1,8 @@
 package advent.of.code.year2019;
 
-import advent.of.code.Utils;
 import advent.of.code.year2019.intcode.IntCodeProcess;
 import advent.of.code.year2019.intcode.IntCodeProgram;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -13,15 +11,15 @@ public class Day2 {
         IntCodeProgram program = IntCodeProgram.load("/2019/day2.txt");
 
         System.out.println(
-                Arrays.stream(processIntcode(program, BigInteger.valueOf(12), BigInteger.valueOf(2)).getProgram())
+                Arrays.stream(processIntcode(program, 12L, 2L).getProgram())
                         .map(Object::toString)
                         .collect(Collectors.joining(","))
         );
 
-        for (int i = 0; i < 100; i++) {
-            for (int j = 0; j < 100; j++) {
-                BigInteger[] result = processIntcode(program, BigInteger.valueOf(i), BigInteger.valueOf(j)).getProgram();
-                if (result[0].equals(BigInteger.valueOf(19690720))) {
+        for (long i = 0; i < 100; i++) {
+            for (long j = 0; j < 100; j++) {
+                Long[] result = processIntcode(program, i, j).getProgram();
+                if (result[0].equals(19690720L)) {
                     System.out.println(String.format("Noun: %s Verb: %s", i, j));
                     System.out.println(String.format("100 * %s + %s = %s", i, j, (100 * i) + j));
                     break;
@@ -30,7 +28,7 @@ public class Day2 {
         }
     }
 
-    private static IntCodeProcess processIntcode(IntCodeProgram program, BigInteger noun, BigInteger verb) {
+    private static IntCodeProcess processIntcode(IntCodeProgram program, Long noun, Long verb) {
         program.getCode()[1] = noun;
         program.getCode()[2] = verb;
         return program.run();

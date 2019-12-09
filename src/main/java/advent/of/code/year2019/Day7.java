@@ -2,10 +2,8 @@ package advent.of.code.year2019;
 
 import advent.of.code.Utils;
 import advent.of.code.year2019.intcode.IOProvider;
-import advent.of.code.year2019.intcode.IntCodeProcess;
 import advent.of.code.year2019.intcode.IntCodeProgram;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
@@ -17,41 +15,41 @@ public class Day7 {
         IntCodeProgram program = IntCodeProgram.load("/2019/day7.txt");
 
         System.out.println(findMaxSignal(program));
-        System.out.println(findMaxSignal(program, Utils.buildBigIntegerArray(5, 6, 7, 8, 9)));
+        System.out.println(findMaxSignal(program, Utils.buildLongArray(5, 6, 7, 8, 9)));
     }
 
-    static BigInteger findMaxSignal(IntCodeProgram program) {
-        BigInteger[] sequence = Utils.buildBigIntegerArray(0, 1, 2, 3, 4);
+    static Long findMaxSignal(IntCodeProgram program) {
+        Long[] sequence = Utils.buildLongArray(0, 1, 2, 3, 4);
         return findMaxSignal(program, sequence);
     }
 
-    static BigInteger findMaxSignal(IntCodeProgram program, BigInteger[] sequence) {
-        IntContainer max = new IntContainer(BigInteger.ZERO);
+    static Long findMaxSignal(IntCodeProgram program, Long[] sequence) {
+        IntContainer max = new IntContainer(0L);
 
         generateAllPermutations(sequence, (permutation) ->
-                max.setValue(Utils.max(max.getValue(), runPipeline(permutation, program)))
+                max.setValue(Math.max(max.getValue(), runPipeline(permutation, program)))
         );
 
         return max.getValue();
     }
 
     private static class IntContainer {
-        private BigInteger value;
+        private Long value;
 
-        IntContainer(BigInteger value) {
+        IntContainer(Long value) {
             this.value = value;
         }
 
-        BigInteger getValue() {
+        Long getValue() {
             return value;
         }
 
-        void setValue(BigInteger value) {
+        void setValue(Long value) {
             this.value = value;
         }
     }
 
-    private static void generateAllPermutations(BigInteger[] sequence, Consumer<BigInteger[]> generate) {
+    private static void generateAllPermutations(Long[] sequence, Consumer<Long[]> generate) {
         int[] index = new int[sequence.length];
         Arrays.fill(index, 0);
 
@@ -78,17 +76,17 @@ public class Day7 {
         }
     }
 
-    private static void swap(BigInteger[] input, int a, int b) {
-        BigInteger tmp = input[a];
+    private static void swap(Long[] input, int a, int b) {
+        Long tmp = input[a];
         input[a] = input[b];
         input[b] = tmp;
     }
 
-    static BigInteger runPipeline(BigInteger[] sequence, IntCodeProgram program) {
+    static Long runPipeline(Long[] sequence, IntCodeProgram program) {
         QueueIOProvider[] ioProviders = new QueueIOProvider[sequence.length];
 
         for (int i = 0; i < sequence.length; i++) {
-            BlockingQueue<BigInteger> inputQueue;
+            BlockingQueue<Long> inputQueue;
 
             if (i == 0)
                 inputQueue = new LinkedBlockingQueue<>();
@@ -97,7 +95,7 @@ public class Day7 {
 
             inputQueue.add(sequence[i]);
 
-            BlockingQueue<BigInteger> outputQueue;
+            BlockingQueue<Long> outputQueue;
 
             if (i == sequence.length - 1)
                 outputQueue = ioProviders[0].getInputQueue();
@@ -107,7 +105,7 @@ public class Day7 {
             ioProviders[i] = new QueueIOProvider(inputQueue, outputQueue);
         }
 
-        ioProviders[0].getInputQueue().add(BigInteger.ZERO);
+        ioProviders[0].getInputQueue().add(0L);
 
         CompletableFuture[] futures = new CompletableFuture[ioProviders.length];
 
@@ -122,34 +120,34 @@ public class Day7 {
     }
 
     static class QueueIOProvider implements IOProvider {
-        private BlockingQueue<BigInteger> inputQueue;
-        private BlockingQueue<BigInteger> outputQueue;
+        private BlockingQueue<Long> inputQueue;
+        private BlockingQueue<Long> outputQueue;
 
-        QueueIOProvider(BlockingQueue<BigInteger> inputQueue, BlockingQueue<BigInteger> outputQueue) {
+        QueueIOProvider(BlockingQueue<Long> inputQueue, BlockingQueue<Long> outputQueue) {
             this.inputQueue = inputQueue;
             this.outputQueue = outputQueue;
         }
 
-        BlockingQueue<BigInteger> getInputQueue() {
+        BlockingQueue<Long> getInputQueue() {
             return inputQueue;
         }
 
-        BlockingQueue<BigInteger> getOutputQueue() {
+        BlockingQueue<Long> getOutputQueue() {
             return outputQueue;
         }
 
         @Override
-        public BigInteger nextInt() {
+        public Long nextInt() {
             try {
                 return inputQueue.take();
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                return BigInteger.ZERO;
+                return 0L;
             }
         }
 
         @Override
-        public void putInt(BigInteger value) {
+        public void putInt(Long value) {
             outputQueue.add(value);
         }
     }

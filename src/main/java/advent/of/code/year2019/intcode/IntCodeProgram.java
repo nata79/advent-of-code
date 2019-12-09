@@ -2,22 +2,21 @@ package advent.of.code.year2019.intcode;
 
 import advent.of.code.Utils;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 public class IntCodeProgram {
-    private final BigInteger[] code;
+    private final Long[] code;
 
     private static IntCodeProgram parse(String s) {
-        return new IntCodeProgram(Arrays.stream(s.split(",")).map(BigInteger::new).toArray(BigInteger[]::new));
+        return new IntCodeProgram(Arrays.stream(s.split(",")).map(Long::parseLong).toArray(Long[]::new));
     }
 
     public static IntCodeProgram parse(long... l) {
-        BigInteger[] result = new BigInteger[l.length];
+        Long[] result = new Long[l.length];
 
         for (int i = 0; i < l.length; i++)
-            result[i] = BigInteger.valueOf(l[i]);
+            result[i] = l[i];
 
         return new IntCodeProgram(result);
     }
@@ -27,11 +26,11 @@ public class IntCodeProgram {
         return parse(input);
     }
 
-    private IntCodeProgram(BigInteger[] code) {
+    private IntCodeProgram(Long[] code) {
         this.code = code;
     }
 
-    public BigInteger[] getCode() {
+    public Long[] getCode() {
         return code;
     }
 

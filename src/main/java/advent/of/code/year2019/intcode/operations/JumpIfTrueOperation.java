@@ -1,9 +1,7 @@
 package advent.of.code.year2019.intcode.operations;
 
-import advent.of.code.year2019.intcode.IntCodeProcess;
 import advent.of.code.year2019.intcode.IntCodeParameter;
-
-import java.math.BigInteger;
+import advent.of.code.year2019.intcode.IntCodeProcess;
 
 public class JumpIfTrueOperation implements Operation {
     @Override
@@ -23,7 +21,7 @@ public class JumpIfTrueOperation implements Operation {
 
     @Override
     public void moveStackPointer(IntCodeProcess intCodeProcess, IntCodeParameter[] parameters) {
-        if (!parameters[0].getValue().equals(BigInteger.ZERO))
+        if (!parameters[0].getValue().equals(0L))
             intCodeProcess.setStackPointer(parameters[1].getValue().intValue());
         else
             intCodeProcess.setStackPointer(intCodeProcess.getStackPointer() + 1 + getNumberOfParameters());

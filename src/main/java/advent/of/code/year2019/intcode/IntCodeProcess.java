@@ -3,7 +3,6 @@ package advent.of.code.year2019.intcode;
 import advent.of.code.Utils;
 import advent.of.code.year2019.intcode.operations.*;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -12,19 +11,19 @@ public class IntCodeProcess {
     private final Map<Integer, Operation> operations;
     private final IOProvider ioProvider;
 
-    private BigInteger[] program;
+    private Long[] program;
 
     // Execution state
     private int stackPointer;
     private int relativePosition;
 
-    public IntCodeProcess(BigInteger[] program) {
+    public IntCodeProcess(Long[] program) {
         this(program, new StdIOProvider());
     }
 
-    public IntCodeProcess(BigInteger[] program, IOProvider ioProvider) {
-        BigInteger[] programCopy = new BigInteger[program.length * 100];
-        Arrays.fill(programCopy, BigInteger.ZERO);
+    public IntCodeProcess(Long[] program, IOProvider ioProvider) {
+        Long[] programCopy = new Long[program.length * 100];
+        Arrays.fill(programCopy, 0L);
         System.arraycopy(program, 0, programCopy, 0, program.length);
 
         this.program = programCopy;
@@ -67,15 +66,11 @@ public class IntCodeProcess {
         return ioProvider;
     }
 
-    public BigInteger[] getProgram() {
+    public Long[] getProgram() {
         return program;
     }
 
-    public void setProgram(BigInteger[] program) {
-        this.program = program;
-    }
-
-    public BigInteger[] run() {
+    public Long[] run() {
         while (stackPointer < program.length) {
             IntCodeInstruction instruction = readNextInstruction(program);
 
@@ -89,7 +84,7 @@ public class IntCodeProcess {
         return program;
     }
 
-    private IntCodeInstruction readNextInstruction(BigInteger[] program) {
+    private IntCodeInstruction readNextInstruction(Long[] program) {
         List<Integer> digits = Utils.getDigits(program[stackPointer]);
         int opcode;
 

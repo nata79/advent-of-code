@@ -1,15 +1,13 @@
 package advent.of.code.year2019.intcode;
 
-import java.math.BigInteger;
-
 public class IntCodeParameter {
-    private final BigInteger[] program;
+    private final Long[] program;
     private final int relativePosition;
 
-    private final BigInteger integer;
+    private final Long integer;
     private final int mode;
 
-    IntCodeParameter(BigInteger[] program, int relativePosition, BigInteger integer, int mode) {
+    IntCodeParameter(Long[] program, int relativePosition, Long integer, int mode) {
         this.program = program;
         this.relativePosition = relativePosition;
         this.integer = integer;
@@ -28,7 +26,7 @@ public class IntCodeParameter {
         }
     }
 
-    public BigInteger getValue() {
+    public Long getValue() {
         if (mode == 1)
             return integer;
         else

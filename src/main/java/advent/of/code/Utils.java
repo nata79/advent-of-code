@@ -35,6 +35,17 @@ public class Utils {
         return digits;
     }
 
+    public static List<Integer> getDigits(long i) {
+        List<Integer> digits = new ArrayList<>();
+
+        while (i > 0) {
+            digits.add(0, (int) (i % 10));
+            i = i / 10;
+        }
+
+        return digits;
+    }
+
     public static BigInteger[] buildBigIntegerArray(int... integers) {
         BigInteger[] result = new BigInteger[integers.length];
 
@@ -44,16 +55,16 @@ public class Utils {
         return result;
     }
 
-    public static BigInteger max(BigInteger i1, BigInteger i2) {
-        return i1.compareTo(i2) > 0 ? i1 : i2;
+    public static Long[] buildLongArray(int... integers) {
+        Long[] result = new Long[integers.length];
+
+        for (int i = 0; i < integers.length; i++)
+            result[i] = (long) integers[i];
+
+        return result;
     }
 
-    public static List<Integer> getDigits(BigInteger i) {
-        List<Integer> digits = new ArrayList<>();
-
-        for (char c : i.toString().toCharArray())
-            digits.add(Integer.parseInt(String.valueOf(c)));
-
-        return digits;
+    public static BigInteger max(BigInteger i1, BigInteger i2) {
+        return i1.compareTo(i2) > 0 ? i1 : i2;
     }
 }
