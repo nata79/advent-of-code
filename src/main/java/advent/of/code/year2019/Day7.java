@@ -1,7 +1,11 @@
 package advent.of.code.year2019;
 
 import advent.of.code.Utils;
+import advent.of.code.year2019.intcode.IOProvider;
+import advent.of.code.year2019.intcode.IntCodeProcess;
+import advent.of.code.year2019.intcode.IntCodeProgram;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
@@ -10,47 +14,44 @@ import java.util.function.Consumer;
 
 public class Day7 {
     public static void main(String[] args) {
-        String input = Utils.readFile("/2019/day7.txt");
-        Integer[] program = Arrays.stream(input.split(",")).map(Integer::parseInt).toArray(Integer[]::new);
+        IntCodeProgram program = IntCodeProgram.load("/2019/day7.txt");
 
         System.out.println(findMaxSignal(program));
-        System.out.println(findMaxSignal(program, new int[]{5, 6, 7, 8, 9}));
+        System.out.println(findMaxSignal(program, Utils.buildBigIntegerArray(5, 6, 7, 8, 9)));
     }
 
-    static int findMaxSignal(Integer[] program) {
-        int[] sequence = new int[5];
-        Arrays.setAll(sequence, index -> index);
-
+    static BigInteger findMaxSignal(IntCodeProgram program) {
+        BigInteger[] sequence = Utils.buildBigIntegerArray(0, 1, 2, 3, 4);
         return findMaxSignal(program, sequence);
     }
 
-    static int findMaxSignal(Integer[] program, int[] sequence) {
-        IntContainer max = new IntContainer(0);
+    static BigInteger findMaxSignal(IntCodeProgram program, BigInteger[] sequence) {
+        IntContainer max = new IntContainer(BigInteger.ZERO);
 
         generateAllPermutations(sequence, (permutation) ->
-                max.setValue(Math.max(max.getValue(), runPipeline(permutation, program)))
+                max.setValue(Utils.max(max.getValue(), runPipeline(permutation, program)))
         );
 
         return max.getValue();
     }
 
     private static class IntContainer {
-        private int value;
+        private BigInteger value;
 
-        IntContainer(int value) {
+        IntContainer(BigInteger value) {
             this.value = value;
         }
 
-        int getValue() {
+        BigInteger getValue() {
             return value;
         }
 
-        void setValue(int value) {
+        void setValue(BigInteger value) {
             this.value = value;
         }
     }
 
-    private static void generateAllPermutations(int[] sequence, Consumer<int[]> generate) {
+    private static void generateAllPermutations(BigInteger[] sequence, Consumer<BigInteger[]> generate) {
         int[] index = new int[sequence.length];
         Arrays.fill(index, 0);
 
@@ -77,17 +78,17 @@ public class Day7 {
         }
     }
 
-    private static void swap(int[] input, int a, int b) {
-        int tmp = input[a];
+    private static void swap(BigInteger[] input, int a, int b) {
+        BigInteger tmp = input[a];
         input[a] = input[b];
         input[b] = tmp;
     }
 
-    static int runPipeline(int[] sequence, Integer[] program) {
+    static BigInteger runPipeline(BigInteger[] sequence, IntCodeProgram program) {
         QueueIOProvider[] ioProviders = new QueueIOProvider[sequence.length];
 
         for (int i = 0; i < sequence.length; i++) {
-            BlockingQueue<Integer> inputQueue;
+            BlockingQueue<BigInteger> inputQueue;
 
             if (i == 0)
                 inputQueue = new LinkedBlockingQueue<>();
@@ -96,7 +97,7 @@ public class Day7 {
 
             inputQueue.add(sequence[i]);
 
-            BlockingQueue<Integer> outputQueue;
+            BlockingQueue<BigInteger> outputQueue;
 
             if (i == sequence.length - 1)
                 outputQueue = ioProviders[0].getInputQueue();
@@ -106,19 +107,12 @@ public class Day7 {
             ioProviders[i] = new QueueIOProvider(inputQueue, outputQueue);
         }
 
-        ioProviders[0].getInputQueue().add(0);
+        ioProviders[0].getInputQueue().add(BigInteger.ZERO);
 
         CompletableFuture[] futures = new CompletableFuture[ioProviders.length];
 
         for (int i = 0; i < ioProviders.length; i++) {
-            int finalI = i;
-            CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() -> {
-                IntCode intCode = new IntCode(ioProviders[finalI]);
-                intCode.processIntcode(Arrays.copyOf(program, program.length));
-                return 0;
-            });
-
-            futures[i] = future;
+            futures[i] = program.runAsync(ioProviders[i]);
         }
 
         for (CompletableFuture future : futures)
@@ -127,35 +121,35 @@ public class Day7 {
         return ioProviders[0].nextInt();
     }
 
-    static class QueueIOProvider implements IntCode.IOProvider {
-        private BlockingQueue<Integer> inputQueue;
-        private BlockingQueue<Integer> outputQueue;
+    static class QueueIOProvider implements IOProvider {
+        private BlockingQueue<BigInteger> inputQueue;
+        private BlockingQueue<BigInteger> outputQueue;
 
-        QueueIOProvider(BlockingQueue<Integer> inputQueue, BlockingQueue<Integer> outputQueue) {
+        QueueIOProvider(BlockingQueue<BigInteger> inputQueue, BlockingQueue<BigInteger> outputQueue) {
             this.inputQueue = inputQueue;
             this.outputQueue = outputQueue;
         }
 
-        BlockingQueue<Integer> getInputQueue() {
+        BlockingQueue<BigInteger> getInputQueue() {
             return inputQueue;
         }
 
-        BlockingQueue<Integer> getOutputQueue() {
+        BlockingQueue<BigInteger> getOutputQueue() {
             return outputQueue;
         }
 
         @Override
-        public int nextInt() {
+        public BigInteger nextInt() {
             try {
                 return inputQueue.take();
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                return 0;
+                return BigInteger.ZERO;
             }
         }
 
         @Override
-        public void putInt(int value) {
+        public void putInt(BigInteger value) {
             outputQueue.add(value);
         }
     }
