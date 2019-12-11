@@ -10,9 +10,13 @@ import java.util.List;
 
 public class Utils {
     public static String readFile(String filepath) {
+        return readFile(filepath, Utils.class);
+    }
+
+    public static String readFile(String filepath, Class klass) {
         try {
             return new String(
-                    Files.readAllBytes(Paths.get(Utils.class.getResource(filepath).toURI()))
+                    Files.readAllBytes(Paths.get(klass.getResource(filepath).toURI()))
             );
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
