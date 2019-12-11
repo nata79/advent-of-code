@@ -28,13 +28,11 @@ public class Day11 {
     }
 
     private static void printBoard(Map<Point, Long> board) throws IOException {
-        Stream<Integer> xStream = board.keySet().stream().map(Point::getX);
-        int minX = xStream.min(Integer::compareTo).orElse(0);
-        int maxX = xStream.max(Integer::compareTo).orElse(0);
+        int minX = board.keySet().stream().map(Point::getX).min(Integer::compareTo).orElse(0);
+        int maxX = board.keySet().stream().map(Point::getX).max(Integer::compareTo).orElse(0);
 
-        Stream<Integer> yStream = board.keySet().stream().map(Point::getY);
-        int minY = yStream.min(Integer::compareTo).orElse(0);
-        int maxY = yStream.max(Integer::compareTo).orElse(0);
+        int minY = board.keySet().stream().map(Point::getY).min(Integer::compareTo).orElse(0);
+        int maxY = board.keySet().stream().map(Point::getY).max(Integer::compareTo).orElse(0);
 
         BufferedImage bufferedImage = new BufferedImage(Math.abs(maxX - minX), Math.abs(maxY - minY) + 1, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = bufferedImage.createGraphics();
@@ -56,7 +54,6 @@ public class Day11 {
 
         CompletableFuture<IntCodeProcess> future = program.runAsync(new QueueIOProvider(inputQueue, outputQueue));
 
-        // Start on a black
         inputQueue.add(defaultColour);
 
         Position position = new Position();
@@ -118,13 +115,13 @@ public class Day11 {
         void move() {
             switch (currentDirection) {
                 case 'u':
-                    currentY++;
+                    currentY--;
                     break;
                 case 'r':
                     currentX++;
                     break;
                 case 'd':
-                    currentY--;
+                    currentY++;
                     break;
                 case 'l':
                     currentX--;
