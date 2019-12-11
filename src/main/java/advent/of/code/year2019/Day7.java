@@ -1,8 +1,8 @@
 package advent.of.code.year2019;
 
 import advent.of.code.Utils;
-import advent.of.code.year2019.intcode.IOProvider;
 import advent.of.code.year2019.intcode.IntCodeProgram;
+import advent.of.code.year2019.intcode.QueueIOProvider;
 
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
@@ -117,38 +117,5 @@ public class Day7 {
             future.join();
 
         return ioProviders[0].nextInt();
-    }
-
-    static class QueueIOProvider implements IOProvider {
-        private BlockingQueue<Long> inputQueue;
-        private BlockingQueue<Long> outputQueue;
-
-        QueueIOProvider(BlockingQueue<Long> inputQueue, BlockingQueue<Long> outputQueue) {
-            this.inputQueue = inputQueue;
-            this.outputQueue = outputQueue;
-        }
-
-        BlockingQueue<Long> getInputQueue() {
-            return inputQueue;
-        }
-
-        BlockingQueue<Long> getOutputQueue() {
-            return outputQueue;
-        }
-
-        @Override
-        public Long nextInt() {
-            try {
-                return inputQueue.take();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                return 0L;
-            }
-        }
-
-        @Override
-        public void putInt(Long value) {
-            outputQueue.add(value);
-        }
     }
 }
