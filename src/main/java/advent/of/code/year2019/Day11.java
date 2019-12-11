@@ -16,6 +16,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 public class Day11 {
     public static void main(String[] args) throws InterruptedException, IOException {
@@ -27,11 +28,13 @@ public class Day11 {
     }
 
     private static void printBoard(Map<Point, Long> board) throws IOException {
-        int minX = board.keySet().stream().map(Point::getX).min(Integer::compareTo).get();
-        int maxX = board.keySet().stream().map(Point::getX).max(Integer::compareTo).get();
+        Stream<Integer> xStream = board.keySet().stream().map(Point::getX);
+        int minX = xStream.min(Integer::compareTo).orElse(0);
+        int maxX = xStream.max(Integer::compareTo).orElse(0);
 
-        int minY = board.keySet().stream().map(Point::getY).min(Integer::compareTo).get();
-        int maxY = board.keySet().stream().map(Point::getY).max(Integer::compareTo).get();
+        Stream<Integer> yStream = board.keySet().stream().map(Point::getY);
+        int minY = yStream.min(Integer::compareTo).orElse(0);
+        int maxY = yStream.max(Integer::compareTo).orElse(0);
 
         BufferedImage bufferedImage = new BufferedImage(Math.abs(maxX - minX), Math.abs(maxY - minY) + 1, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = bufferedImage.createGraphics();
