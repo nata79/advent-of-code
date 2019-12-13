@@ -97,7 +97,6 @@ public class Day12 {
     static class Moon {
         private final int[] position;
         private final int[] velocity;
-        private Long orbitSteps;
 
         Moon(int[] position) {
             this.position = position;
