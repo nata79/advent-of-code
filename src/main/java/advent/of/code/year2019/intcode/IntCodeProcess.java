@@ -6,6 +6,8 @@ import advent.of.code.year2019.intcode.operations.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class IntCodeProcess {
     private final Map<Integer, Operation> operations;
@@ -82,6 +84,27 @@ public class IntCodeProcess {
         }
 
         return program;
+    }
+
+    /**
+     * @return true if the program finished
+     */
+    boolean runUntilInputNeeded(Supplier<Boolean> inputNeeded) {
+        while (stackPointer < program.length) {
+            IntCodeInstruction instruction = readNextInstruction(program);
+
+            if (instruction.getOperation().getOpCode() == 3)
+                if (inputNeeded.get())
+                    return false;
+
+            if (instruction.getOperation().getOpCode() == 99)
+                return true;
+
+            instruction.execute(this);
+            instruction.moveStackPointer(this);
+        }
+
+        return false;
     }
 
     private IntCodeInstruction readNextInstruction(Long[] program) {

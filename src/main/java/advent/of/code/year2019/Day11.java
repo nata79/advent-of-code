@@ -1,8 +1,7 @@
 package advent.of.code.year2019;
 
-import advent.of.code.year2019.intcode.IntCodeProcess;
+import advent.of.code.year2019.intcode.IntCodeBlockingIOExecutor;
 import advent.of.code.year2019.intcode.IntCodeProgram;
-import advent.of.code.year2019.intcode.QueueIOProvider;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -12,13 +11,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.Queue;
 
 public class Day11 {
-    public static void main(String[] args) throws InterruptedException, IOException {
+    public static void main(String[] args) throws IOException {
         Map<Point, Long> board = runRobot(0L);
         System.out.println(board.size());
 
@@ -41,36 +37,33 @@ public class Day11 {
             g2d.fillRect(entry.getKey().getX() - minX, entry.getKey().getY() - minY, 1, 1);
         }
 
-        File file = new File("day10.png");
+        File file = new File("day11.png");
         ImageIO.write(bufferedImage, "png", file);
     }
 
-    private static Map<Point, Long> runRobot(long defaultColour) throws InterruptedException {
+    private static Map<Point, Long> runRobot(long defaultColour) {
         IntCodeProgram program = IntCodeProgram.load("/2019/day11.txt");
+        IntCodeBlockingIOExecutor executor = program.getBlockingIOExecutor();
 
-        BlockingQueue<Long> inputQueue = new LinkedBlockingQueue<>();
-        BlockingQueue<Long> outputQueue = new LinkedBlockingQueue<>();
-
-        CompletableFuture<IntCodeProcess> future = program.runAsync(new QueueIOProvider(inputQueue, outputQueue));
-
-        inputQueue.add(defaultColour);
+        executor.provideInput(defaultColour);
 
         Position position = new Position();
         Map<Point, Long> board = new HashMap<>();
 
-        while (!future.isDone()) {
-            Long colour = outputQueue.poll(1, TimeUnit.SECONDS);
-            Long directionChange = outputQueue.poll(1, TimeUnit.SECONDS);
+        while (executor.isRunning()) {
+            Queue<Long> output = executor.runUntilInputNeeded();
 
-            if (colour != null && directionChange != null) {
+            Long colour = output.remove();
+            Long directionChange = output.remove();
 
-                board.put(new Point(position.getCurrentX(), position.getCurrentY()), colour);
+            board.put(new Point(position.getCurrentX(), position.getCurrentY()), colour);
 
-                position.changeDirection(directionChange);
-                position.move();
+            position.changeDirection(directionChange);
+            position.move();
 
-                inputQueue.add(board.getOrDefault(new Point(position.getCurrentX(), position.getCurrentY()), 0L));
-            }
+            executor.provideInput(
+                    board.getOrDefault(new Point(position.getCurrentX(), position.getCurrentY()), 0L)
+            );
         }
         return board;
     }

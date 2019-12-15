@@ -26,12 +26,20 @@ public class IntCodeProgram {
         return parse(input);
     }
 
+    public void overrideInstruction(int position, Long newValue) {
+        code[position] = newValue;
+    }
+
     private IntCodeProgram(Long[] code) {
         this.code = code;
     }
 
     public Long[] getCode() {
         return code;
+    }
+
+    public IntCodeBlockingIOExecutor getBlockingIOExecutor() {
+        return new IntCodeBlockingIOExecutor(code);
     }
 
     public IntCodeProcess run() {
