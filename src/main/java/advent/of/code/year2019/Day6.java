@@ -58,7 +58,7 @@ public class Day6 {
             adjacentVertices.get(to).add(from);
         }
 
-        private Map<String, Integer> getDistances(String root) {
+        Map<String, Integer> getDistances(String root) {
             Map<String, Integer> distances = new HashMap<>();
             distances.put(root, 0);
 
@@ -74,8 +74,10 @@ public class Day6 {
                     visited.add(vertex);
 
                     for (String adjacentVertex : this.getAdjacentVertices(vertex)) {
-                        stack.push(adjacentVertex);
-                        distances.put(adjacentVertex, distances.get(vertex) + 1);
+                        if (!distances.containsKey(adjacentVertex) || distances.get(adjacentVertex) > distances.get(vertex) + 1) {
+                            stack.push(adjacentVertex);
+                            distances.put(adjacentVertex, distances.get(vertex) + 1);
+                        }
                     }
                 }
             }
