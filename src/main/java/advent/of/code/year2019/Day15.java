@@ -9,12 +9,14 @@ public class Day15 {
     public static void main(String[] args) {
         IntCodeProgram program = IntCodeProgram.load("/2019/day15.txt");
         IntCodeBlockingIOExecutor executor = program.getBlockingIOExecutor();
-        
+
         int[] currentPosition = new int[]{0, 0};
         long lastMovement = 1L;
 
         Day6.Graph graph = new Day6.Graph();
         graph.addVertex(Arrays.toString(currentPosition));
+
+        String oxygenSystem = null;
 
         executor.provideInput(lastMovement);
         int steps = 2_000_000;
@@ -29,6 +31,9 @@ public class Day15 {
                 );
 
                 currentPosition = nextPosition(currentPosition, lastMovement);
+
+                if (state == 2)
+                    oxygenSystem = Arrays.toString(currentPosition);
             }
 
             lastMovement = new Random().nextInt(4) + 1;
@@ -37,8 +42,9 @@ public class Day15 {
         }
 
 
-        System.out.println(graph.getDistances(Arrays.toString(new int[]{0, 0})).get(Arrays.toString(new int[]{18, 18})));
-        System.out.println(graph.getDistances(Arrays.toString(new int[]{18, 18})).values().stream().max(Integer::compareTo));
+        String origin = Arrays.toString(new int[]{0, 0});
+        System.out.println(graph.getDistances(origin).get(oxygenSystem));
+        System.out.println(graph.getDistances(oxygenSystem).values().stream().max(Integer::compareTo));
     }
 
     private static int[] nextPosition(int[] currentPosition, long movement) {
