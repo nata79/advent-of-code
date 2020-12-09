@@ -18,8 +18,7 @@ def has_colour(rule, colour, rules)
   return true if rule[:children].any? { |children| children[:colour] == colour }
 
   rule[:children].any? do |child|
-    r = rules.find { |r| r[:colour] == child[:colour] }
-    has_colour(r, colour, rules)
+    has_colour(rules.find { |r| r[:colour] == child[:colour] }, colour, rules)
   end
 end
 
