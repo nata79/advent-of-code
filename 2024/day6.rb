@@ -1,7 +1,7 @@
 require 'set'
 
 directions = ['^', '>', 'v', '<']
-obstacles = []
+obstacles = Set.new
 initial_position = [0, 0]
 initial_direction = '^'
 input_lines = File.read('day6.txt').split("\n")
@@ -72,9 +72,7 @@ total = 0
 
 tried = Set.new
 
-steps.each_with_index do |step, i|
-  p "#{i}/#{steps.size-1}"
-
+steps.each_with_index do |step, i|  
   visited = steps[0...i].to_set
 
   if i < steps.size - 1 && steps[i+1][0] != initial_position
